@@ -36,6 +36,14 @@ app.set('view engine', 'hbs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
+//SESSION
+app.use(session({
+  secret: 'whatever',
+  resave: true,
+  saveUninitialized: true
+}));
+
+require('./configs/passport/passport.setup')(app);
 
 
 // default value for title local
@@ -51,6 +59,9 @@ app.use(cors({
 
 const index = require('./routes/index');
 app.use('/', index);
+
+const authRoutes = require('./routes/authService');
+app.use('/', authRoutes);
 
 // include your new routes here:
 app.use('/api', require('./routes/thing-routes'));

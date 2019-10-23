@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const cors = require('cors');
 const bodyParser   = require('body-parser');
 const cookieParser = require('cookie-parser');
 const express      = require('express');
@@ -8,8 +9,9 @@ const favicon      = require('serve-favicon');
 const hbs          = require('hbs');
 const logger       = require('morgan');
 const path         = require('path');
-const cors = require('cors');
 
+//enables databse connection
+require('./configs/database/db.setup')
 
 const app_name = require('./package.json').name;
 const debug = require('debug')(`${app_name}:${path.basename(__filename).split('.')[0]}`);
@@ -40,7 +42,7 @@ app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 app.use(session({
   secret: 'whatever',
   resave: true,
-  saveUninitialized: true
+  saveUninitialized: true // don't save any sessions that doesn't have any data in them
 }));
 
 require('./configs/passport/passport.setup')(app);
@@ -53,7 +55,8 @@ app.locals.title = 'Express - Generated with IronGenerator';
 // ADD CORS HERE:
 app.use(cors({
   // this could be multiple domains/origins, but we will allow just our React app
-  origin: [ "http://localhost:3000" ]
+  credentials: true,
+  origin: ["http://localhost:3000"]
 }));
 
 

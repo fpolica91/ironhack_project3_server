@@ -3,9 +3,20 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  username: String,
-  password: String,
-  image: String
+  username: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    match: /^.+@.+\..+$/
+  },
+  encryptedPassword: {
+    type: String,
+    required: true
+  },
+  imageUrl: String
 },
 {
   timestamps: true

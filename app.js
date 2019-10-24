@@ -67,6 +67,7 @@ const authRoutes = require('./routes/authService');
 app.use('/', authRoutes);
 
 // include your new routes here:
+app.use('/', require('./routes/post-routes'));
 app.use('/api', require('./routes/thing-routes'));
 app.use('/api', require('./routes/file-upload-routes'));
 

@@ -13,7 +13,7 @@ const uploader = require('../configs/cloudinary-setup');
 
 router.post('/auth/signup', uploader.single("imageUrl"), (req, res ,next) => {
   console.log(req.body);
-  const {username, email, password, imageUrl} = req.body;
+  const {username, email, password, imagePost} = req.body;
 
   if(username === "" || password === ""){
 res.status(401).json({message: "All field need to be filled and password must contain a number!"})
@@ -30,6 +30,7 @@ return;
     const bcryptsalt = 10;
     const salt = bcrypt.genSaltSync(bcryptsalt);
     const encryptedPassword = bcrypt.hashSync(password, salt);
+    const imageUrl = imagePost
 
     User.create({username, email, encryptedPassword, imageUrl})
     .then(userDoc => {

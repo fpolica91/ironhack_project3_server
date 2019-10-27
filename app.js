@@ -41,6 +41,7 @@ app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 //SESSION
 app.use(session({
   secret: 'whatever',
+  
   resave: true,
   saveUninitialized: true // don't save any sessions that doesn't have any data in them
 }));

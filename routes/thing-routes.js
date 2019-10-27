@@ -13,10 +13,6 @@ router.get('/things', (req, res, next) => {
 })
 
 router.post('/things/create', (req, res, next) => {
-    // console.log('body: ', req.body); ==> here we can see that all
-    // the fields have the same names as the ones in the model so we can simply pass
-    // req.body to the .create() method
-    
     Image.create(req.body)
     .then( aNewThing => {
         // console.log('Created new thing: ', aNewThing);

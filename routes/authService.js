@@ -15,7 +15,7 @@ router.post('/auth/signup', uploader.single("imageUrl"), (req, res ,next) => {
   console.log(req.body);
   const {username, email, password, imagePost} = req.body;
 
-  if(username === "" || password === ""){
+if(username === "" || password === ""){
 res.status(401).json({message: "All field need to be filled and password must contain a number!"})
 return;
   }
@@ -31,14 +31,9 @@ return;
     const salt = bcrypt.genSaltSync(bcryptsalt);
     const encryptedPassword = bcrypt.hashSync(password, salt);
     const imageUrl = imagePost
-
+//
     User.create({username, email, encryptedPassword, imageUrl})
     .then(userDoc => {
-
-  // if all good, log in the user automatically
-          // "req.login()" is a Passport method that calls "serializeUser()"
-          // (that saves the USER ID in the session)
-
       req.login(userDoc, (err) => {
         if(err){
           res.status(401).json({message: "Something happened logging in after the signup"})
@@ -75,20 +70,26 @@ router.post('/auth/login', (req, res, next) => {
   })(req, res, next);
 })
 
-router.delete('/auth/logout', (req, res, next) => {
+router.post('/auth/logout', (req, res, next) => {
   req.logout();
-
   res.json({userDoc: null})
 })
 
 router.get('/auth/loggedin', (req, res, next) => {
+  console.log(req)
   if(req.user){
     req.user.encryptedPassword = undefined;
-
     res.status(200).json({userDoc: req.user})
   }else{
     res.status(401).json({userDoc: null})
   }
+})
+
+
+
+router.get('/auth/users', (req,res,_) =>{
+  User.find()
+  .then(data => res.json(data))
 })
 
 module.exports = router;

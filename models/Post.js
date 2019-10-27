@@ -4,17 +4,23 @@ const Schema = mongoose.Schema;
 const postSchema = new Schema({
   caption: {
     type: String,
-    required: true
+   
   },
   image: {
     type: String,
     required: true
   },
-  owner: String,
-  likes: [String]
-  // owner: {
-  //   type: Schema.Types.ObjectId, ref: "User"
-  // }
+  // owner: String,
+  likes: {
+      type:[{type: Schema.Types.ObjectId, ref:"User"}],
+      unique: true
+  },
+  tags:[String],
+  owner: {
+    type: Schema.Types.ObjectId, ref: "User"
+  }
+}, {
+  timestamps: true
 })
 
 const Post = mongoose.model('Post', postSchema);

@@ -4,18 +4,15 @@ const Schema = mongoose.Schema;
 const postSchema = new Schema({
   caption: {
     type: String,
-   
+
   },
   image: {
     type: String,
     required: true
   },
   // owner: String,
-  likes: {
-      type:[{type: Schema.Types.ObjectId, ref:"User"}],
-      unique: true
-  },
-  tags:[String],
+  likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  tags: [String],
   owner: {
     type: Schema.Types.ObjectId, ref: "User"
   }

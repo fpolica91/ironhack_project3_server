@@ -16,10 +16,13 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
-  imageUrl: String
+  imageUrl: String,
+  followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  following: [{ type: Schema.Types.ObjectId, ref: "User" }]
 },
-{
-  timestamps: true
-})
+
+  {
+    timestamps: true
+  })
 
 module.exports = mongoose.model('User', userSchema);

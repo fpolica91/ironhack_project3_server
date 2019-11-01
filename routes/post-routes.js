@@ -15,6 +15,8 @@ router.get('/users', (req, res, _) => {
     .catch(err => res.json(err))
 })
 
+
+
 router.post('/follow/:id', async (req, res, _) => {
   const { id } = req.params
   const { currentUser } = req.body
@@ -40,7 +42,8 @@ router.post('/follow/:id', async (req, res, _) => {
                 } else {
                   res.json({
                     followers: __user.followers,
-                    following: user.following
+                    following: user.following,
+                    message: "follow"
                   })
                 }
               })
@@ -62,7 +65,9 @@ router.post('/follow/:id', async (req, res, _) => {
               } else {
                 res.json({
                   followers: __user.followers,
-                  following: user.following
+                  following: user.following,
+                  message: ""
+
                 })
               }
             })
@@ -72,6 +77,40 @@ router.post('/follow/:id', async (req, res, _) => {
     }
   })
 })
+
+
+
+
+router.put("/updatePost/:id", async (req, res, _) => {
+  const { id } = req.params
+
+  if (!id) {
+    res.json({ success: false, message: "cannot find post to edit" })
+  } else {
+    try {
+      console.log(req.body)
+      await Post.findOneAndUpdate({ _id: id }, {
+        caption: req.body.caption,
+        tags: req.body.tags
+      })
+        .then(post => {
+          res.json({
+            tags: post.tags,
+            caption: post.caption
+          })
+        })
+        .catch(err => {
+          if (err) {
+            res.json(err)
+          }
+        })
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+})
+
 
 
 
@@ -220,107 +259,3 @@ module.exports = router;
 
 
 
-  // const { currentUser } = req.body
-  // try {
-  //   await User.findById(req.params.id, (err, user) => {
-  //     if (err) {
-  //       res.json({ success: false, message: "unexpected error" })
-  //     } else {
-  //       if (!user) {
-  //         res.json({ success: false, message: "unable to find user" })
-  //       }
-  //       User.findById(currentUser._id, (err, requesting_user) => {
-  //         if (err) {
-  //           res.json(400, { message: "unexpected error occurred" })
-  //         } else {
-  //           if (!user) {
-  //             res.json(401, { message: "user not found" })
-  //           } else if (requesting_user.following.some(followed => followed.equals(req.params.id))) {
-  //             const index = requesting_user.following.indexOf(req.params.id)
-  //             requesting_user.following.splice(index, 1)
-  //             requesting_user.save((err, r_user) => {
-  //               if (err) {
-  //                 res.json(500, { message: "server error" })
-  //               } else {
-  //                 res.json(r_user)
-  //               }
-  //             })
-  //           } else {
-  //             requesting_user.following.push(req.params.id)
-  //             requesting_user.save()
-  //           }
-  //         }
-
-
-  //         if (req.params.id === currentUser._id) {
-  //           res.json({ success: false, message: "sorry you cannot follow yourself" })
-  //         } else if (user.followers.some(follower => follower.equals(currentUser._id))) {
-  //           const index = user.followers.indexOf(currentUser._id);
-  //           user.followers.splice(index, 1);
-  //           user.save((err, usr) => {
-  //             if (err) {
-  //               res.json({ success: false, message: "error occurred" })
-  //             } else {
-  //               res.json(usr)
-  //             }
-  //           })
-  //         } else {
-  //           user.followers.push(currentUser._id)
-  //           user.save()
-  //         }
-  //       })
-  //     }
-  //   })
-  // } catch (err) {
-  //   console.log(err)
-  // }
-  // await User.findById(id, (err, user) => {
-  //   if (err) {
-  //     res.json({ success: false, message: "unexpected error" })
-  //   } else {
-  //     if (!user) {
-  //       res.json({ success: false, message: "cannot find user" })
-  //     }
-  //     if (user.followers.some(follower => follower.equals(requesting_user))) {
-  //       const index = user.followers.indexOf(requesting_user)
-  //       user.followers.splice(index, 1)
-  //       user.save((err, user) => {
-  //         if (err) {
-  //           res.json({ success: false, message: "error" })
-  //         } else {
-  //           console.log(user)
-  //         }
-  //       })
-  //     } else {
-  //       User.findById(requesting_user, (err, request) => {
-  //         if (err) {
-  //           res.json({ success: false, message: "unexpected error ocurred" })
-  //         } else {
-  //           if (request.following.some(followed => followed.equals(requested_user))) {
-  //             const index = request.following.indexOf(requested_user)
-  //             request.following.splice(index, 1)
-  //             request.save()
-  //           } else {
-  //             user.followers.push(requesting_user)
-  //             user.save((err, user) => {
-  //               if (err) {
-  //                 console.log(err)
-  //               } else {
-  //                 res.json(user)
-  //               }
-  //             })
-  //             request.following.push(requested_user)
-  //             request.save((err, user) => {
-  //               if (err) {
-  //                 console.log(err)
-  //               } else {
-  //                 res.json(user)
-  //               }
-  //             })
-  //             res.end()
-  //           }
-  //         }
-  //       })
-  //     }
-  //   }
-  // })

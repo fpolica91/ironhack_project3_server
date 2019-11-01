@@ -87,11 +87,22 @@ router.get('/auth/loggedin', (req, res, next) => {
 
 
 
-router.get('/auth/users', (req, res, _) => {
-  User.find()
-    .then(data => res.json(data))
-})
+// router.get('/auth/users', (req, res, _) => {
+//   User.find()
+//     .then(data => res.json(data))
+// })
 
+router.get('/auth/users', (req, res, next) => {
+  User.find()
+    .then(allUser => {
+      const protectUsers = []
+      for (let i = 0; i < allUser.length; i++) {
+        allUser[i].encryptedPassword = null
+        protectUsers.push(allUser[i])
+      }
+      res.json(protectUsers)
+    })
+})
 
 
 

@@ -1,6 +1,18 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const Comment = new Schema({
+  user: { type: Schema.Types.ObjectId, ref: "User" },
+  comment: {
+    type: String,
+  }
+}, {
+  timestamps: true
+})
+
+
+
+
 const postSchema = new Schema({
   caption: {
     type: String,
@@ -10,12 +22,13 @@ const postSchema = new Schema({
     type: String,
     required: true
   },
-  // owner: String,
+
   likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
   tags: [String],
   owner: {
     type: Schema.Types.ObjectId, ref: "User"
-  }
+  },
+  comments: [Comment]
 }, {
   timestamps: true
 })

@@ -20,11 +20,12 @@ router.get('/users', (req, res, _) => {
 router.post('/follow/:id', async (req, res, _) => {
   const { id } = req.params
   const { currentUser } = req.body
+  console.log(req.user)
   const requesting_user = currentUser._id
   const requested_user = id
   User.findById(id, (err, user) => {
     if (user.followers.some(follower => follower.equals(requesting_user))) {
-      const index = user.followers.indexOf(requested_user)
+      const index = user.followers.indexOf(requesting_user)
       user.followers.splice(index, 1)
       user.save((err, __user) => {
         if (err) {
@@ -76,6 +77,29 @@ router.post('/follow/:id', async (req, res, _) => {
       })
     }
   })
+})
+
+
+router.put('/addComments/:id', (req, res, _) => {
+  const { id } = req.params
+  const { comments, currentUser } = req.body
+
+  console.log(req.user)
+  try {
+    Post.findByIdAndUpdate(id,
+      {
+        $push: {
+          comments: {
+            user: currentUser,
+            comment: comments
+          }
+        }
+      })
+      .then(post => res.json(post))
+      .catch(err => console.log(err))
+  } catch (err) {
+    throw err
+  }
 })
 
 
@@ -163,10 +187,19 @@ router.get("/createNewPost", async (req, res, _) => {
       }
     })
       .populate('owner')
-      .then(data => res.json(data))
+      .populate('comments.user')
+      .populate('likes')
+      // .then(data => res.json(data))
+      .exec(function (err, post) {
+        if (err) {
+          throw err;
+        } else {
+          res.json(post)
+        }
+      })
   }
   catch (err) {
-    console.log(error)
+    console.log(err)
   }
 
 

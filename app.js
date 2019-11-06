@@ -40,14 +40,19 @@ app.set('view engine', 'hbs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
+
+
+
+
 //SESSION
 app.use(session({
-  secret: 'secret',
+  secret: 'super secret blur blah blah',
   resave: true,
   saveUninitialized: true // don't save any sessions that doesn't have any data in them
 }));
 
 require('./configs/passport/passport.setup')(app);
+
 
 
 // default value for title local

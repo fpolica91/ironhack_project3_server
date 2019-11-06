@@ -41,6 +41,7 @@ router.post('/auth/signup', uploader.single("imageUrl"), (req, res, next) => {
             }
 
             userDoc.encryptedPassword = undefined;
+
             res.status(200).json({ userDoc });
           })
         })
@@ -63,7 +64,6 @@ router.post('/auth/login', (req, res, next) => {
         res.status(500).json({ message: 'Something went wrong with getting user object from DB' })
         return;
       }
-
       userDoc.encryptedPassword = undefined;
       res.status(200).json({ userDoc })
     })
@@ -76,10 +76,11 @@ router.post('/auth/logout', (req, res, next) => {
 })
 
 router.get('/auth/loggedin', (req, res, next) => {
-  console.log(req)
+
   if (req.user) {
     req.user.encryptedPassword = undefined;
-    res.status(200).json({ userDoc: req.user })
+    res.json({ userDoc: req.user })
+
   } else {
     res.status(401).json({ userDoc: null })
   }
@@ -93,7 +94,10 @@ router.get('/auth/loggedin', (req, res, next) => {
 // })
 
 router.get('/auth/users', (req, res, next) => {
+  console.log("the req.user ====== ", req.user);
   User.find()
+    .populate('followers')
+    .populate('following ')
     .then(allUser => {
       const protectUsers = []
       for (let i = 0; i < allUser.length; i++) {

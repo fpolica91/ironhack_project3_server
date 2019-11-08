@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../models/Post");
 const User = require("../models/User");
+const Notification = require('../models/Notification')
 
 // include CLOUDINARY:
 const uploader = require("../configs/cloudinary-setup");
@@ -41,6 +42,7 @@ router.post('/follow/:id', async (req, res, _) => {
                 if (err) {
                   res.json({ success: false, message: "unexpected error" })
                 } else {
+
                   res.json({
                     followers: __user.followers,
                     following: user.following,
@@ -95,7 +97,19 @@ router.put('/addComments/:id', (req, res, _) => {
           }
         }
       })
-      .then(post => res.json(post))
+      // .then(post => res.json(post))d
+      .then(post => {
+        const notification = new Notification({
+          event: "comment added",
+          body: comments,
+          toWhat: post.comments._id,
+          toWho: post.owner._id,
+          fromWho: currentUser._id,
+          seen: false
+        })
+        notification.save()
+        res.json(post)
+      })
       .catch(err => console.log(err))
   } catch (err) {
     throw err
@@ -150,12 +164,13 @@ router.post(
   uploader.single("imageUrl"),
   async (req, res, next) => {
 
-
     const { caption, imagePost, tags } = req.body;
 
     if (!imagePost || !req.user) {
       res.json({ success: false, message: "Loggin in is required to" })
     }
+
+
 
     try {
       await Post.create({
@@ -165,7 +180,18 @@ router.post(
         likes: [],
         tags
       })
-        .then(data => res.json(data))
+        // .then(data => res.json(data))
+        .then(post => {
+          const notification = new Notification({
+            event: "new post created",
+            toWhat: post._id,
+            toWho: post.owner.followers,
+            fromWho: post.owner._id,
+            seen: false
+          })
+          notification.save()
+          res.json(post)
+        })
         .catch(err => console.log(err));
     } catch (err) {
       console.log(err);
@@ -245,7 +271,16 @@ router.post("/update/:id", async (req, res, _) => {
               if (err) {
                 res.json({ success: false, message: "error" })
               } else {
+                let notification = new Notification({
+                  event: `follower disliked image`,
+                  toWhat: req.params.id,
+                  toWho: post.owner._id,
+                  fromWho: req.body.currentUser._id,
+                  seen: false
+                })
+                notification.save()
                 res.json(post)
+                // res.json(post)
               }
             })
           } else {
@@ -254,11 +289,19 @@ router.post("/update/:id", async (req, res, _) => {
               if (err) {
                 res.json({ success: false, message: "Something went wrong" })
               } else {
+                let notification = new Notification({
+                  event: `follower liked image`,
+                  toWhat: req.params.id,
+                  toWho: post.owner._id,
+                  fromWho: req.body.currentUser._id,
+                  seen: false
+                })
+                notification.save()
                 res.json(post)
               }
             });
           }
-          console.log(req.user)
+
         });
       }
     }

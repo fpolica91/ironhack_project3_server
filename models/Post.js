@@ -16,7 +16,6 @@ const Comment = new Schema({
 const postSchema = new Schema({
   caption: {
     type: String,
-
   },
   image: {
     type: String,
@@ -28,6 +27,7 @@ const postSchema = new Schema({
   owner: {
     type: Schema.Types.ObjectId, ref: "User"
   },
+
   comments: [Comment]
 }, {
   timestamps: true

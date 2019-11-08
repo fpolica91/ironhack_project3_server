@@ -12,6 +12,7 @@ const userSchema = new Schema({
     required: true,
     match: /^.+@.+\..+$/
   },
+
   encryptedPassword: {
     type: String,
     required: true
